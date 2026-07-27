@@ -1,0 +1,2 @@
+Serialization -> process of converting an object into JSON format
+Deserialization -> process of converting a JSON format into an object
