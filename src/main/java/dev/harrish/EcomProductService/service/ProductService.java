@@ -2,6 +2,7 @@ package dev.harrish.EcomProductService.service;
 
 import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
 import dev.harrish.EcomProductService.entity.Product;
+import dev.harrish.EcomProductService.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public interface ProductService
 {
     List <FakeStoreProductResponseDTO> getAllProducts();
-    Product getProduct (int productId);
+    FakeStoreProductResponseDTO getProduct (int productId) throws ProductNotFoundException;
     Product createProduct (Product product);
     Product updateProduct(Product updatedProduct, int productId);
     boolean deleteProduct(int productId);
