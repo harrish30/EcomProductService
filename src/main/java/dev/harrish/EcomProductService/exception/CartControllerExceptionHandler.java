@@ -19,4 +19,14 @@ public class CartControllerExceptionHandler
         );
         return new ResponseEntity <> (exceptionResponseDTO, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(RandomException.class)
+    public ResponseEntity handleCartRandomException(RandomException randomException)
+    {
+        ExceptionResponseDTO exceptionResponseDTO = new ExceptionResponseDTO(
+                randomException.getMessage(),
+                404
+        );
+        return new ResponseEntity <> (exceptionResponseDTO, HttpStatus.NOT_FOUND);
+    }
 }

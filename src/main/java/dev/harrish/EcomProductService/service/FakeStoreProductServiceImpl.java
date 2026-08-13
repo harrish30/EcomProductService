@@ -7,10 +7,9 @@ import dev.harrish.EcomProductService.exception.NoProductPresentException;
 import dev.harrish.EcomProductService.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@Service
+@Service("fakeStoreProductService")
 public class FakeStoreProductServiceImpl implements ProductService
 {
     @Autowired

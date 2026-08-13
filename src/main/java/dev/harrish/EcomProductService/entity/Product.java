@@ -1,13 +1,15 @@
 package dev.harrish.EcomProductService.entity;
 
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Product
+@Entity
+
+public class Product extends BaseModel
 {
-    private int productId;
     private String title;
     private double price;
     private String description;

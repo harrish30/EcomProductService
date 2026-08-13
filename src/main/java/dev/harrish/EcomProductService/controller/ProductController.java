@@ -1,13 +1,14 @@
 package dev.harrish.EcomProductService.controller;
 
 import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
+import dev.harrish.EcomProductService.entity.Product;
 import dev.harrish.EcomProductService.exception.InvalidInputException;
+import dev.harrish.EcomProductService.exception.RandomException;
 import dev.harrish.EcomProductService.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProductController
 {
     @Autowired
+    @Qualifier("productService")
     private ProductService productService; //field injection
 
     //mapping and redirection to a particular method inside a controller is done by dispatcher servlet
@@ -35,5 +37,18 @@ public class ProductController
         }
         FakeStoreProductResponseDTO product = productService.getProduct(id);
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/productexception")
+    public ResponseEntity getProductException()
+    {
+        throw new RandomException("Exception from product");
+    }
+
+    @PostMapping("/product")
+    public ResponseEntity createProduct(@RequestBody Product product)
+    {
+        Product savedProduct = productService.createProduct(product);
+        return ResponseEntity.ok(savedProduct);
     }
 }

@@ -3,6 +3,7 @@ package dev.harrish.EcomProductService.controller;
 import dev.harrish.EcomProductService.client.FakeStoreClient;
 import dev.harrish.EcomProductService.dto.FakeStoreCartResponseDTO;
 import dev.harrish.EcomProductService.exception.CartNotFoundException;
+import dev.harrish.EcomProductService.exception.RandomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,5 +27,10 @@ public class CartController
             throw new CartNotFoundException("Cart not found for user id:" + userId);
         }
         return ResponseEntity.ok(cartResponse);
+    }
+    @GetMapping("/cartexception")
+    public ResponseEntity getCartException()
+    {
+        throw new RandomException("Exception from cart");
     }
 }
