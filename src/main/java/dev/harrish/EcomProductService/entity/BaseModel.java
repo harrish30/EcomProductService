@@ -18,8 +18,8 @@ public abstract class BaseModel
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @CreationTimestamp
+    @CreationTimestamp //hibernate's annotation
     private Instant createdAt; //no.of seconds/nanoseconds passed since 1 Jan 1970 UTC
-    @UpdateTimestamp
+    @UpdateTimestamp //hibernate's annotation
     private Instant updatedAt; //no.of seconds/nanoseconds passed since 1 Jan 1970 UTC
 }

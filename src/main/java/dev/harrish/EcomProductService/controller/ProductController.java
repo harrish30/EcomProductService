@@ -11,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@RequestMapping("/product") //base URL for all the APIs in this controller
 public class ProductController
 {
     @Autowired
@@ -21,34 +23,62 @@ public class ProductController
 
     //mapping and redirection to a particular method inside a controller is done by dispatcher servlet
     //handler mapping stores the mapping
-    @GetMapping("/product")
+    @GetMapping
     public ResponseEntity getAllProducts()
     {
-        List <FakeStoreProductResponseDTO> products = productService.getAllProducts();
+        List <Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/product/{id}")
-    public ResponseEntity getProductById(@PathVariable("id") int id)
+    @GetMapping("/{id}")
+    public ResponseEntity getProductById(@PathVariable("id") UUID id)
     {
-        if(id < 1)
+        if(id == null)
         {
             throw new InvalidInputException("The input is not correct");
         }
-        FakeStoreProductResponseDTO product = productService.getProduct(id);
+        Product product = productService.getProduct(id);
         return ResponseEntity.ok(product);
     }
 
+    @PostMapping
+    public ResponseEntity createProduct(@RequestBody Product product)
+    {
+        Product savedProduct = productService.createProduct(product);
+        return ResponseEntity.ok(savedProduct);
+    }
+
+    //used for demo of controller advice
     @GetMapping("/productexception")
     public ResponseEntity getProductException()
     {
         throw new RandomException("Exception from product");
     }
 
-    @PostMapping("/product")
-    public ResponseEntity createProduct(@RequestBody Product product)
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteProduct(@PathVariable("id") UUID id)
     {
-        Product savedProduct = productService.createProduct(product);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.ok(productService.deleteProduct(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity updateProduct(@PathVariable("id") UUID id, @RequestBody Product product)
+    {
+        Product updatedProduct = productService.updateProduct(product, id);
+        return ResponseEntity.ok(updatedProduct);
+    }
+
+    @GetMapping("/name/{productName}")
+    public ResponseEntity getProductByProductName(@PathVariable("productName") String productName)
+    {
+        Product product = productService.getProduct(productName);
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/{min}/{max}")
+    public ResponseEntity getProductByPriceRange(@PathVariable("min") double minPrice, @PathVariable("max") double maxPrice)
+    {
+        List <Product> products = productService.getProducts(minPrice, maxPrice);
+        return ResponseEntity.ok(products);
     }
 }
