@@ -1,6 +1,7 @@
 package dev.harrish.EcomProductService.controller;
 
-import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
+import dev.harrish.EcomProductService.dto.CreateProductRequestDTO;
+import dev.harrish.EcomProductService.dto.ProductResponseDTO;
 import dev.harrish.EcomProductService.entity.Product;
 import dev.harrish.EcomProductService.exception.InvalidInputException;
 import dev.harrish.EcomProductService.exception.RandomException;
@@ -24,28 +25,25 @@ public class ProductController
     //mapping and redirection to a particular method inside a controller is done by dispatcher servlet
     //handler mapping stores the mapping
     @GetMapping
-    public ResponseEntity getAllProducts()
+    public ResponseEntity <List <ProductResponseDTO>> getAllProducts() //better practice to specific this -> <List <ProductResponseDTO>>, so that it accepts of this type
     {
-        List <Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getProductById(@PathVariable("id") UUID id)
+    public ResponseEntity <ProductResponseDTO> getProductById(@PathVariable("id") UUID id)
     {
         if(id == null)
         {
             throw new InvalidInputException("The input is not correct");
         }
-        Product product = productService.getProduct(id);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(productService.getProduct(id));
     }
 
     @PostMapping
-    public ResponseEntity createProduct(@RequestBody Product product)
+    public ResponseEntity <ProductResponseDTO> createProduct(@RequestBody CreateProductRequestDTO createProductRequestDTO)
     {
-        Product savedProduct = productService.createProduct(product);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.ok(productService.createProduct(createProductRequestDTO));
     }
 
     //used for demo of controller advice
@@ -56,29 +54,26 @@ public class ProductController
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteProduct(@PathVariable("id") UUID id)
+    public ResponseEntity <Boolean> deleteProduct(@PathVariable("id") UUID id)
     {
         return ResponseEntity.ok(productService.deleteProduct(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateProduct(@PathVariable("id") UUID id, @RequestBody Product product)
+    public ResponseEntity <ProductResponseDTO> updateProduct(@PathVariable("id") UUID id, @RequestBody CreateProductRequestDTO createProductRequestDTO)
     {
-        Product updatedProduct = productService.updateProduct(product, id);
-        return ResponseEntity.ok(updatedProduct);
+        return ResponseEntity.ok(productService.updateProduct(createProductRequestDTO, id));
     }
 
     @GetMapping("/name/{productName}")
-    public ResponseEntity getProductByProductName(@PathVariable("productName") String productName)
+    public ResponseEntity <ProductResponseDTO> getProductByProductName(@PathVariable("productName") String productName)
     {
-        Product product = productService.getProduct(productName);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(productService.getProduct(productName));
     }
 
     @GetMapping("/{min}/{max}")
-    public ResponseEntity getProductByPriceRange(@PathVariable("min") double minPrice, @PathVariable("max") double maxPrice)
+    public ResponseEntity <List <ProductResponseDTO>> getProductByPriceRange(@PathVariable("min") double minPrice, @PathVariable("max") double maxPrice)
     {
-        List <Product> products = productService.getProducts(minPrice, maxPrice);
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(productService.getProducts(minPrice, maxPrice));
     }
 }

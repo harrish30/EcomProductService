@@ -1,7 +1,7 @@
 package dev.harrish.EcomProductService.service;
 
 import dev.harrish.EcomProductService.client.FakeStoreClient;
-import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
+import dev.harrish.EcomProductService.dto.fakeStoreDTOs.FakeStoreProductResponseDTO;
 import dev.harrish.EcomProductService.entity.Product;
 import dev.harrish.EcomProductService.exception.NoProductPresentException;
 import dev.harrish.EcomProductService.exception.ProductNotFoundException;

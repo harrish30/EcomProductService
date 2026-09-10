@@ -1,12 +1,18 @@
 package dev.harrish.EcomProductService.service;
 
-import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
+import dev.harrish.EcomProductService.dto.CreateProductRequestDTO;
+import dev.harrish.EcomProductService.dto.ProductResponseDTO;
+import dev.harrish.EcomProductService.entity.Category;
 import dev.harrish.EcomProductService.entity.Product;
+import dev.harrish.EcomProductService.exception.CategoryNotFoundException;
 import dev.harrish.EcomProductService.exception.ProductNotFoundException;
+import dev.harrish.EcomProductService.mapper.ProductEntityDTOMapper;
+import dev.harrish.EcomProductService.repository.CategoryRepository;
 import dev.harrish.EcomProductService.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +21,8 @@ public class ProductServiceImpl implements ProductService
 {
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public boolean deleteProduct(UUID productId)
@@ -24,13 +32,19 @@ public class ProductServiceImpl implements ProductService
     }
 
     @Override
-    public List <Product> getAllProducts()
+    public List <ProductResponseDTO> getAllProducts()
     {
-        return productRepository.findAll();
+        List <Product> savedProducts = productRepository.findAll();
+        List <ProductResponseDTO> productResponseDTOs = new ArrayList<>();
+        for(Product product : savedProducts)
+        {
+            productResponseDTOs.add(ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(product));
+        }
+        return productResponseDTOs;
     }
 
     @Override
-    public Product getProduct(UUID productId) throws ProductNotFoundException
+    public ProductResponseDTO getProduct(UUID productId) throws ProductNotFoundException
     {
         //basic code to implement null check
 //        Product savedProduct = productRepository.findById(productId).get();
@@ -40,42 +54,53 @@ public class ProductServiceImpl implements ProductService
 //        }
 //        return savedProduct;
 
-        return productRepository.findById(productId).orElseThrow(
-                () -> new ProductNotFoundException("Product not found for id: \" + productId")
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new ProductNotFoundException("Product not found for id: " + productId)
         );
+        return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(product);
     }
 
     @Override
-    public Product createProduct(Product product)
+    public ProductResponseDTO createProduct(CreateProductRequestDTO createProductRequestDTO)
     {
-        Product savedProduct = productRepository.save(product);
-        return savedProduct;
+        Product savedProduct = ProductEntityDTOMapper.convertCreateProductRequestDTOtoProduct(createProductRequestDTO);
+        Category savedCategory = categoryRepository.findById(createProductRequestDTO.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found for id: " + createProductRequestDTO.getCategoryId())
+        );
+        savedProduct.setCategory(savedCategory);
+        savedProduct = productRepository.save(savedProduct);
+        return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(savedProduct);
     }
 
     @Override
-    public Product updateProduct(Product updatedProduct, UUID productId) {
+    public ProductResponseDTO updateProduct(CreateProductRequestDTO updatedProduct, UUID productId)
+    {
         Product savedProduct =  productRepository.findById(productId).orElseThrow(
                 () -> new ProductNotFoundException("Product not found for id: \" + productId")
         );
-        savedProduct.setCategory(updatedProduct.getCategory());
         savedProduct.setDescription(updatedProduct.getDescription());
         savedProduct.setImageURL(updatedProduct.getImageURL());
         savedProduct.setPrice(updatedProduct.getPrice());
-        savedProduct.setRating(updatedProduct.getRating());
         savedProduct.setTitle(updatedProduct.getTitle());
-        savedProduct = productRepository.save(savedProduct);
-        return savedProduct;
+        savedProduct = productRepository.save(savedProduct); //can't update rating since it's done by user and category change is not allowed
+        return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(savedProduct);
     }
 
     @Override
-    public Product getProduct(String productName)
+    public ProductResponseDTO getProduct(String productName)
     {
-        return productRepository.findProductByTitle(productName);
+        return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(productRepository.findProductByTitle(productName));
     }
 
     @Override
-    public List<Product> getProducts(double minPrice, double maxPrice)
+    public List<ProductResponseDTO> getProducts(double minPrice, double maxPrice)
     {
-        return productRepository.findByPriceBetween(minPrice, maxPrice);
+        List <Product> products = productRepository.findByPriceBetween(minPrice, maxPrice);
+        List <ProductResponseDTO> productResponseDTOs = new ArrayList<>();
+        for(Product product : products)
+        {
+            productResponseDTOs.add(ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(product));
+        }
+        return productResponseDTOs;
     }
 }

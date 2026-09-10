@@ -1,7 +1,7 @@
 package dev.harrish.EcomProductService.client;
 
-import dev.harrish.EcomProductService.dto.FakeStoreCartResponseDTO;
-import dev.harrish.EcomProductService.dto.FakeStoreProductResponseDTO;
+import dev.harrish.EcomProductService.dto.fakeStoreDTOs.FakeStoreCartResponseDTO;
+import dev.harrish.EcomProductService.dto.fakeStoreDTOs.FakeStoreProductResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
