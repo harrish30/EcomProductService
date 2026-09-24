@@ -68,12 +68,16 @@ public class ProductServiceImpl implements ProductService
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found for id: " + createProductRequestDTO.getCategoryId())
         );
         savedProduct.setCategory(savedCategory);
-        savedProduct = productRepository.save(savedProduct);
+        productRepository.save(savedProduct);
+        List <Product> products = savedCategory.getProducts();
+        products.add(savedProduct);
+        savedCategory.setProducts(products);
+        categoryRepository.save(savedCategory);
         return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(savedProduct);
     }
 
     @Override
-    public ProductResponseDTO updateProduct(CreateProductRequestDTO updatedProduct, UUID productId)
+    public ProductResponseDTO updateProduct(CreateProductRequestDTO updatedProduct, UUID productId) throws ProductNotFoundException
     {
         Product savedProduct =  productRepository.findById(productId).orElseThrow(
                 () -> new ProductNotFoundException("Product not found for id: \" + productId")
@@ -82,7 +86,7 @@ public class ProductServiceImpl implements ProductService
         savedProduct.setImageURL(updatedProduct.getImageURL());
         savedProduct.setPrice(updatedProduct.getPrice());
         savedProduct.setTitle(updatedProduct.getTitle());
-        savedProduct = productRepository.save(savedProduct); //can't update rating since it's done by user and category change is not allowed
+        productRepository.save(savedProduct); //can't update rating since it's done by user and category change is not allowed
         return ProductEntityDTOMapper.convertProductEntityToProductResponseDTO(savedProduct);
     }
 
